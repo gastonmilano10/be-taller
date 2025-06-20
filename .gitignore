@@ -1,4 +1,13 @@
-node_modules/
 .env
-dist/
+
+# Node.js
+node_modules/
+
+# Prisma
+
 generated/
+.prisma/
+.prisma/client/
+
+# Compilados de TypeScript
+dist/
