@@ -6,6 +6,7 @@ import testRoutes from './routes/test';
 dotenv.config();
 
 const app: Express = express();
+app.use(express.json());
 const port = process.env.PORT || 3001;
 
 app.use(cors());
