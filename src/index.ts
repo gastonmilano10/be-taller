@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import testRoutes from './routes/test';
+import testRoutes from "./routes/services";
 
 dotenv.config();
 
@@ -12,10 +12,10 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Serversssssaa");
+  res.send("Express + TypeScript Serversssss");
 });
 
-app.use('/test-servicios', testRoutes);
+app.use("/services", testRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

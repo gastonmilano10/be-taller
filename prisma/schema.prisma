@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Servicio {
+model Service {
   id        String   @id @default(cuid())
   fechaCreacion     String
   fechaAtencion     String?
