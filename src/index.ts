@@ -1,8 +1,11 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import servicesRoutes from "./routes/services";
+
+//ROUTES
 import clientsRoutes from "./routes/clients";
+import vehiclesRoutes from "./routes/vehicles";
+import servicesRoutes from "./routes/services";
 
 const port = process.env.PORT || 3001;
 
@@ -16,11 +19,14 @@ app.get("/", (req: Request, res: Response) => {
   res.send("SERVIDOR CORRIENDO OK");
 });
 
-//SERVICEs
-app.use("/services", servicesRoutes);
-
-//CLIENTs
+//CLIENTS
 app.use("/clients", clientsRoutes);
+
+//VEHICLES
+app.use("/vehicles", vehiclesRoutes);
+
+//SERVICES
+app.use("/services", servicesRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
