@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("SERVIDOR CORRIENDO OK");
+  res.send("SERVIDOR CORRIENDO OKKK");
 });
 
 //CLIENTS
@@ -37,4 +37,4 @@ app.listen(port, () => {
 });
 
 //SWAGER
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

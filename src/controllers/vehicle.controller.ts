@@ -12,7 +12,10 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllVehicles = async (req: Request, res: Response) => {
+export const getAllVehicles = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const vehicles = await prisma.vehicle.findMany({
       where: { isActive: true },

@@ -5,7 +5,16 @@ import { validate } from "../middlewares/validate";
 
 const router = Router();
 
-//GET OBTENER TODOS LOS CLIENTES
+/**
+ * @swagger
+ * /clients/getAll:
+ *   get:
+ *     summary: Obtener todos los clientes activos
+ *     tags: [Clients]
+ *     responses:
+ *       200:
+ *         description: Lista de clientes activos
+ */
 router.get("/getAll", getAllClients);
 
 //POST CREAR NUEVO CLIENTE
