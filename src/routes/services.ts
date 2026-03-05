@@ -18,7 +18,6 @@ const router = Router();
  *       200:
  *         description: Lista de servicios activos
  */
-//GET OBTENER TODOS LOS SERVICES
 router.get("/getAll", getAllServices);
 
 /**
@@ -54,7 +53,6 @@ router.get("/getAll", getAllServices);
  *       500:
  *         description: Error interno del servidor
  */
-//POST CREAR SERVICE
 router.post("/create", validate(createServiceSchema), createService);
 
 export default router;
