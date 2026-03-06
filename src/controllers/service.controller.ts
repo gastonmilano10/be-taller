@@ -12,7 +12,7 @@ export const createService = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllServices = async (res: Response) => {
+export const getAllServices = async (req: Request, res: Response) => {
   try {
     const services = await prisma.service.findMany({
       where: { isActive: true },

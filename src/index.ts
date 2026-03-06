@@ -2,6 +2,10 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
+//SWAGGER
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swagger";
+
 //ROUTES
 import clientsRoutes from "./routes/clients";
 import vehiclesRoutes from "./routes/vehicles";
@@ -16,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("SERVIDOR CORRIENDO OK");
+  res.send("SERVIDOR CORRIENDO OKKK");
 });
 
 //CLIENTS
@@ -31,3 +35,6 @@ app.use("/services", servicesRoutes);
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+//SWAGER
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

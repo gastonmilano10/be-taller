@@ -3,6 +3,18 @@ import prisma from "../prisma";
 
 export const createClient = async (req: Request, res: Response) => {
   try {
+    const existingClient = await prisma.client.findFirst({
+      where: { name: req.body.name, surname: req.body.surname, isActive: true },
+    });
+
+    if (existingClient) {
+      res.status(400).json({
+        isError: true,
+        error: "Ya existe un cliente con ese nombre y apellido",
+      });
+      return;
+    }
+
     const newClient = await prisma.client.create({ data: req.body });
 
     res.status(201).json({ isError: false, data: newClient });
