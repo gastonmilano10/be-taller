@@ -155,3 +155,21 @@ model NextService {
   vehicleId Int     @unique
   Vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
 }
+
+model User {
+  id      Int     @id @default(autoincrement())
+  email   String  @unique
+  name    String?
+  picture String?
+  role    String  @default("USER_OWNER")
+
+  //Audit fields
+  isActive   Boolean @default(true)
+  createdOn  String  @default("")
+  modifiedOn String  @default("")
+}
+
+enum Role {
+  USER_OWNER
+  ADMIN
+}
