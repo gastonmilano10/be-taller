@@ -5,7 +5,7 @@ import {
   createAccessToken,
   createRefreshToken,
 } from "../services/auth.servide";
-import { UserRole } from "../@types/user.types";
+import { UserRole } from "../types/user.types";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 

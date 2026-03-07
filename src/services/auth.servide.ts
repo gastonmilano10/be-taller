@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-import { User } from "../@types/user.types";
+import { User } from "../types/user.types";
 
 export const createAccessToken = (user: User) => {
   return jwt.sign(

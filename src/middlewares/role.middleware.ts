@@ -1,14 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { User } from "../@types/user.types";
-
-type AuthenticationRequest = Request & { user: User };
+import { RequestHandler } from "express";
 
 export const authorize = (...roles: string[]) => {
-  return (req: AuthenticationRequest, res: Response, next: NextFunction) => {
-    if (!roles.includes(req.user.role ?? "")) {
-      return res.status(403).json({ message: "Acceso denegado" });
+  const findRole: RequestHandler = (req, res, next) => {
+    if (!roles.includes(req.user?.role ?? "")) {
+      res.status(403).json({ message: "Acceso denegado" });
+      return;
     }
     next();
   };
+
+  return findRole;
 };

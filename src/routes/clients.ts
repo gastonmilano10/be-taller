@@ -2,6 +2,8 @@ import { Router } from "express";
 import { createClient, getAllClients } from "../controllers/client.controller";
 import { createClientSchema } from "../validators/client.validator";
 import { validate } from "../middlewares/validate";
+import { authenticate } from "../middlewares/auth.middleware";
+import { authorize } from "../middlewares/role.middleware";
 
 const router = Router();
 
@@ -50,6 +52,12 @@ router.get("/getAll", getAllClients);
  *       500:
  *         description: Error al crear cliente
  */
-router.post("/create", validate(createClientSchema), createClient);
+router.post(
+  "/create",
+  authenticate,
+  authorize("ADMIN"),
+  validate(createClientSchema),
+  createClient,
+);
 
 export default router;
