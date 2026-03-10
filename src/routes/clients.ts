@@ -42,6 +42,8 @@ router.get("/getAll", getAllClients);
  *                 type: string
  *               phone:
  *                 type: string
+ *               address:
+ *                 type: string
  *               email:
  *                 type: string
  *     responses:

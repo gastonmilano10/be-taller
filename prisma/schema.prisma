@@ -12,6 +12,7 @@ model Client {
   name    String
   surname String
   phone   String
+  address String?
   email   String?
 
   //Audit fields
