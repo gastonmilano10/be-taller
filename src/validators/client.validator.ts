@@ -11,3 +11,9 @@ export const createClientSchema = z.object({
     .optional()
     .or(z.literal("")),
 });
+
+export const getClientsSchema = z.object({
+  id: z.coerce.number().optional(),
+  name: z.string().optional(),
+  surname: z.string().optional(),
+});

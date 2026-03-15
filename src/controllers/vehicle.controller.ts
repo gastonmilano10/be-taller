@@ -3,6 +3,18 @@ import prisma from "../prisma";
 
 export const createVehicle = async (req: Request, res: Response) => {
   try {
+    const existingVehicle = await prisma.vehicle.findFirst({
+      where: { number: req.body.number, isActive: true },
+    });
+
+    if (existingVehicle) {
+      res.status(400).json({
+        isError: true,
+        error: "Ya existe un vehiculo con esta patente",
+      });
+      return;
+    }
+
     const newVehicle = await prisma.vehicle.create({ data: req.body });
 
     res.status(201).json({ isError: false, data: newVehicle });
@@ -12,10 +24,7 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllVehicles = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllVehicles = async (req: Request, res: Response) => {
   try {
     const vehicles = await prisma.vehicle.findMany({
       where: { isActive: true },
