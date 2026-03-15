@@ -1,21 +1,42 @@
 import { Router } from "express";
-import { createClient, getAllClients } from "../controllers/client.controller";
-import { createClientSchema } from "../validators/client.validator";
+import { createClient, getClients } from "../controllers/client.controller";
+import {
+  createClientSchema,
+  getClientsSchema,
+} from "../validators/client.validator";
 import { validate } from "../middlewares/validate";
 
 const router = Router();
 
 /**
  * @swagger
- * /clients/getAll:
+ * /clients/get:
  *   get:
- *     summary: Obtener todos los clientes activos
+ *     summary: Obtener clientes (con filtros opcionales)
  *     tags: [Clients]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: number
+ *         description: ID del cliente
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Nombre del cliente
+ *       - in: query
+ *         name: surname
+ *         schema:
+ *           type: string
+ *         description: Apellido del cliente
  *     responses:
  *       200:
- *         description: Lista de clientes activos
+ *         description: Lista de clientes
+ *       400:
+ *         description: Error de validación
  */
-router.get("/getAll", getAllClients);
+router.get("/get", validate(getClientsSchema, "query"), getClients);
 
 /**
  * @swagger

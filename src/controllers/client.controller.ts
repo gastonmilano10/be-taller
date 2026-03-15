@@ -24,9 +24,18 @@ export const createClient = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllClients = async (req: Request, res: Response) => {
+export const getClients = async (req: Request, res: Response) => {
   try {
-    const clients = await prisma.client.findMany({ where: { isActive: true } });
+    const { id, name, surname } = req.query;
+
+    const clients = await prisma.client.findMany({
+      where: {
+        isActive: true,
+        ...(id && { id: Number(id) }),
+        ...(name && { name: String(name) }),
+        ...(surname && { surname: String(surname) }),
+      },
+    });
 
     res.status(200).json({ isError: false, data: clients });
   } catch (error) {
