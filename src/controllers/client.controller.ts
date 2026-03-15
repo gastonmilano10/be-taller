@@ -43,3 +43,47 @@ export const getClients = async (req: Request, res: Response) => {
     res.status(500).json({ isError: true, error: "Error al obtener clientes" });
   }
 };
+
+export const editClient = async (req: Request, res: Response) => {
+  try {
+    const { id, ...data } = req.body;
+
+    const existingClient = await prisma.client.findFirst({
+      where: { id, isActive: true },
+    });
+
+    if (!existingClient) {
+      res.status(404).json({ isError: true, error: "Cliente no encontrado" });
+      return;
+    }
+
+    if (data.name && data.surname) {
+      const duplicatedClient = await prisma.client.findFirst({
+        where: {
+          id: { not: id },
+          name: data.name,
+          surname: data.surname,
+          isActive: true,
+        },
+      });
+
+      if (duplicatedClient) {
+        res.status(400).json({
+          isError: true,
+          error: "Ya existe un cliente con ese nombre y apellido",
+        });
+        return;
+      }
+    }
+
+    const clientUpdated = await prisma.client.update({
+      where: { id },
+      data,
+    });
+
+    res.status(200).json({ isError: false, data: clientUpdated });
+  } catch (error) {
+    console.error("Error al editar cliente:", error);
+    res.status(500).json({ isError: true, error: "Error al editar cliente" });
+  }
+};
