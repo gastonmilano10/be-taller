@@ -1,7 +1,12 @@
 import { Router } from "express";
-import { createClient, getClients } from "../controllers/client.controller";
+import {
+  createClient,
+  editClient,
+  getClients,
+} from "../controllers/client.controller";
 import {
   createClientSchema,
+  editClientSchema,
   getClientsSchema,
 } from "../validators/client.validator";
 import { validate } from "../middlewares/validate";
@@ -74,5 +79,44 @@ router.get("/get", validate(getClientsSchema, "query"), getClients);
  *         description: Error al crear cliente
  */
 router.post("/create", validate(createClientSchema), createClient);
+
+/**
+ * @swagger
+ * /clients/edit:
+ *   put:
+ *     summary: Editar un cliente existente
+ *     tags: [Clients]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: number
+ *               name:
+ *                 type: string
+ *               surname:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cliente editado exitosamente
+ *       400:
+ *         description: Error de validación
+ *       404:
+ *         description: Cliente no encontrado
+ *       500:
+ *         description: Error al editar cliente
+ */
+router.put("/edit", validate(editClientSchema), editClient);
 
 export default router;

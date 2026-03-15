@@ -17,3 +17,27 @@ export const getClientsSchema = z.object({
   name: z.string().optional(),
   surname: z.string().optional(),
 });
+
+export const editClientSchema = z
+  .object({
+    id: z.number().int().min(1, "El id es obligatorio"),
+    name: z.string().min(1, "El nombre es obligatorio").optional(),
+    surname: z.string().min(1, "El apellido es obligatorio").optional(),
+    phone: z.string().min(1, "El teléfono es obligatorio").optional(),
+    address: z.string().optional(),
+    email: z
+      .string()
+      .email("Correo electrónico no válido")
+      .optional()
+      .or(z.literal("")),
+  })
+  .refine(
+    ({ name, surname, phone, address, email }) =>
+      [name, surname, phone, address, email].some(
+        (value) => value !== undefined,
+      ),
+    {
+      message: "Debe enviar al menos un campo para editar",
+      path: ["id"],
+    },
+  );
