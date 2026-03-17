@@ -31,6 +31,7 @@ model Vehicle {
   model          String
   year           Int
   engineCapacity Float
+  kilometers     Float
 
   //Audit fields
   isActive   Boolean @default(true)
@@ -38,35 +39,20 @@ model Vehicle {
   modifiedOn String  @default("")
 
   //Relations
-  clientId Int    
+  clientId Int
   client   Client @relation(fields: [clientId], references: [id])
 
-  kilometers   Kilometer[]
   services     Service[]
   nextServices NextService[]
 }
 
-model Kilometer {
-  id        Int     @id @default(autoincrement())
-  quantity  Float
-  isService Boolean @default(false)
-
-  //Audit fields
-  isActive   Boolean @default(true)
-  createdOn  String  @default("")
-  modifiedOn String  @default("")
-
-  //Relations
-  vehicleId Int
-  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
-}
-
 model Service {
-  id            Int     @id @default(autoincrement())
-  reason        String
-  cost          Float
-  attentionDate String?
-  observations  String?
+  id                Int     @id @default(autoincrement())
+  reason            String
+  cost              Float
+  attentionDate     String?
+  observations      String?
+  vehicleKilometers Float
 
   //Audit fields
   isActive   Boolean @default(true)
@@ -95,7 +81,7 @@ model Material {
   modifiedOn String  @default("")
 
   //Relations
-  serviceId Int     
+  serviceId Int
   service   Service @relation(fields: [serviceId], references: [id])
 }
 
@@ -111,7 +97,7 @@ model Labor {
   modifiedOn String  @default("")
 
   //Relations
-  serviceId Int     
+  serviceId Int
   service   Service @relation(fields: [serviceId], references: [id])
 }
 
@@ -153,6 +139,6 @@ model NextService {
   modifiedOn String  @default("")
 
   //Relations
-  vehicleId Int     
+  vehicleId Int
   Vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
 }

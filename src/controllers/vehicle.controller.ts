@@ -38,3 +38,46 @@ export const getAllVehicles = async (req: Request, res: Response) => {
       .json({ isError: true, error: "Error al obtener vehiculos" });
   }
 };
+
+export const editVehicle = async (req: Request, res: Response) => {
+  try {
+    const { id, ...data } = req.body;
+
+    const existingVehicle = await prisma.vehicle.findFirst({
+      where: { id, isActive: true },
+    });
+
+    if (!existingVehicle) {
+      res.status(404).json({ isError: true, error: "Vehiculo no encontrado" });
+      return;
+    }
+
+    if (data.number) {
+      const duplicatedVehicle = await prisma.vehicle.findFirst({
+        where: {
+          id: { not: id },
+          number: data.number,
+          isActive: true,
+        },
+      });
+
+      if (duplicatedVehicle) {
+        res.status(400).json({
+          isError: true,
+          error: "Ya existe un vehiculo con esta patente",
+        });
+        return;
+      }
+    }
+
+    const vehicleUpdated = await prisma.vehicle.update({
+      where: { id },
+      data,
+    });
+
+    res.status(200).json({ isError: false, data: vehicleUpdated });
+  } catch (error) {
+    console.error("Error al editar vehiculo:", error);
+    res.status(500).json({ isError: true, error: "Error al editar vehiculo" });
+  }
+};

@@ -59,6 +59,8 @@ router.get("/get", validate(getClientsSchema, "query"), getClients);
  *               - name
  *               - surname
  *               - phone
+ *               - createdOn
+ *               - modifiedOn
  *             properties:
  *               name:
  *                 type: string
@@ -70,6 +72,10 @@ router.get("/get", validate(getClientsSchema, "query"), getClients);
  *                 type: string
  *               email:
  *                 type: string
+ *              createdOn:
+ *                type: string
+ *              modifiedOn:
+ *               type: string
  *     responses:
  *       201:
  *         description: Cliente creado exitosamente

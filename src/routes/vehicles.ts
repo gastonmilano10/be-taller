@@ -1,16 +1,131 @@
 import { Router } from "express";
 import {
   createVehicle,
+  editVehicle,
   getAllVehicles,
 } from "../controllers/vehicle.controller";
 import { validate } from "../middlewares/validate";
-import { createVehicleSchema } from "../validators/vehicle.validator";
+import {
+  createVehicleSchema,
+  editVehicleSchema,
+} from "../validators/vehicle.validator";
 
 const router = Router();
 
-//GET OBTENER TODOS LOS VEHICULOS
+/**
+ * @swagger
+ * /vehicles/getAll:
+ *   get:
+ *     summary: Obtener todos los vehiculos activos
+ *     tags: [Vehicles]
+ *     responses:
+ *       200:
+ *         description: Lista de vehiculos activos
+ */
 router.get("/getAll", getAllVehicles);
 
+/**
+ * @swagger
+ * /vehicles/create:
+ *   post:
+ *     summary: Crear un nuevo vehiculo
+ *     tags: [Vehicles]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - number
+ *               - brand
+ *               - model
+ *               - year
+ *               - engineCapacity
+ *               - kilometers
+ *               - createdOn
+ *               - modifiedOn
+ *               - clientId
+ *             properties:
+ *               number:
+ *                 type: string
+ *               brand:
+ *                 type: string
+ *               model:
+ *                 type: string
+ *               year:
+ *                 type: number
+ *               engineCapacity:
+ *                 type: number
+ *               createdOn:
+ *                 type: string
+ *               modifiedOn:
+ *                 type: string
+ *               clientId:
+ *                 type: number
+ *               kilometers:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Vehiculo creado exitosamente
+ *       400:
+ *         description: Error de validacion
+ *       500:
+ *         description: Error al crear vehiculo
+ */
 router.post("/create", validate(createVehicleSchema), createVehicle);
+
+/**
+ * @swagger
+ * /vehicles/edit:
+ *   put:
+ *     summary: Editar un vehiculo existente
+ *     tags: [Vehicles]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - number
+ *               - brand
+ *               - model
+ *               - year
+ *               - engineCapacity
+ *               - kilometers
+ *               - modifiedOn
+ *               - clientId
+ *             properties:
+ *               id:
+ *                 type: number
+ *               number:
+ *                 type: string
+ *               brand:
+ *                 type: string
+ *               model:
+ *                 type: string
+ *               year:
+ *                 type: number
+ *               engineCapacity:
+ *                 type: number
+ *               kilometers:
+ *                 type: number
+ *               modifiedOn:
+ *                 type: string
+ *               clientId:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Vehiculo editado exitosamente
+ *       400:
+ *         description: Error de validacion
+ *       404:
+ *         description: Vehiculo no encontrado
+ *       500:
+ *         description: Error al editar vehiculo
+ */
+router.put("/edit", validate(editVehicleSchema), editVehicle);
 
 export default router;
