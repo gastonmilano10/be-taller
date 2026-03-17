@@ -81,3 +81,33 @@ export const editVehicle = async (req: Request, res: Response) => {
     res.status(500).json({ isError: true, error: "Error al editar vehiculo" });
   }
 };
+
+export const deleteVehicle = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+
+    const existingVehicle = await prisma.vehicle.findFirst({
+      where: { id, isActive: true },
+    });
+
+    if (!existingVehicle) {
+      res.status(404).json({ isError: true, error: "Vehiculo no encontrado" });
+      return;
+    }
+
+    const deletedVehicle = await prisma.vehicle.update({
+      where: { id },
+      data: {
+        isActive: false,
+        modifiedOn: new Date().toISOString(),
+      },
+    });
+
+    res.status(200).json({ isError: false, data: deletedVehicle });
+  } catch (error) {
+    console.error("Error al eliminar vehiculo:", error);
+    res
+      .status(500)
+      .json({ isError: true, error: "Error al eliminar vehiculo" });
+  }
+};

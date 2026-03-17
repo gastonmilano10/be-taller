@@ -21,3 +21,7 @@ export const editVehicleSchema = createVehicleSchema
   .extend({
     id: z.number().min(1, "El ID del vehículo es requerido"),
   });
+
+export const deleteVehicleSchema = z.object({
+  id: z.number().min(1, "El ID del vehículo es requerido"),
+});

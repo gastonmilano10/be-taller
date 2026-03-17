@@ -3,10 +3,12 @@ import {
   createVehicle,
   editVehicle,
   getAllVehicles,
+  deleteVehicle,
 } from "../controllers/vehicle.controller";
 import { validate } from "../middlewares/validate";
 import {
   createVehicleSchema,
+  deleteVehicleSchema,
   editVehicleSchema,
 } from "../validators/vehicle.validator";
 
@@ -127,5 +129,7 @@ router.post("/create", validate(createVehicleSchema), createVehicle);
  *         description: Error al editar vehiculo
  */
 router.put("/edit", validate(editVehicleSchema), editVehicle);
+
+router.delete("/delete", validate(deleteVehicleSchema), deleteVehicle);
 
 export default router;
