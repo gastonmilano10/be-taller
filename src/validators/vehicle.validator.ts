@@ -6,7 +6,7 @@ export const createVehicleSchema = z.object({
   model: z.string().min(1, "El modelo es requerido"),
   year: z.number().min(1, "El año es requerido"),
   engineCapacity: z.number().min(1, "Las cilindradas son requeridas"),
-  kilometers: z.number().min(1, "Los kilómetros son requeridos"),
+  kilometers: z.number().min(0, "Los kilómetros son requeridos"),
 
   createdOn: z.string().min(1, "Fecha de creación es requerida"),
   modifiedOn: z.string().min(1, "Fecha de modificación es requerida"),
