@@ -35,6 +35,11 @@ export const getClients = async (req: Request, res: Response) => {
         ...(name && { name: String(name) }),
         ...(surname && { surname: String(surname) }),
       },
+      include: {
+        vehicles: {
+          where: { isActive: true },
+        },
+      },
     });
 
     res.status(200).json({ isError: false, data: clients });
