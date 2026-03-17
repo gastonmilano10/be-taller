@@ -5,7 +5,9 @@ export const createServiceSchema = z.object({
   cost: z.number().optional(),
   attentionDate: z.string().optional(),
   observations: z.string().optional(),
+  vehicleKilometers: z
+    .number()
+    .min(0, "Los kilómetros del vehículo son requeridos"),
 
-  //Relations
-  vehicleId: z.number().min(1, "El es obligatorio"),
+  vehicleId: z.number().min(1, "El vehículo es obligatorio"),
 });

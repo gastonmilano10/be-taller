@@ -15,7 +15,14 @@ export const createClient = async (req: Request, res: Response) => {
       return;
     }
 
-    const newClient = await prisma.client.create({ data: req.body });
+    const now = new Date().toISOString();
+    const newClient = await prisma.client.create({
+      data: {
+        ...req.body,
+        createdOn: now,
+        modifiedOn: now,
+      },
+    });
 
     res.status(201).json({ isError: false, data: newClient });
   } catch (error) {
@@ -81,9 +88,14 @@ export const editClient = async (req: Request, res: Response) => {
       }
     }
 
+    const now = new Date().toISOString();
+
     const clientUpdated = await prisma.client.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        modifiedOn: now,
+      },
     });
 
     res.status(200).json({ isError: false, data: clientUpdated });

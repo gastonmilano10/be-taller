@@ -15,7 +15,15 @@ export const createVehicle = async (req: Request, res: Response) => {
       return;
     }
 
-    const newVehicle = await prisma.vehicle.create({ data: req.body });
+    const now = new Date().toISOString();
+
+    const newVehicle = await prisma.vehicle.create({
+      data: {
+        ...req.body,
+        createdOn: now,
+        modifiedOn: now,
+      },
+    });
 
     res.status(201).json({ isError: false, data: newVehicle });
   } catch (error) {
@@ -70,9 +78,14 @@ export const editVehicle = async (req: Request, res: Response) => {
       }
     }
 
+    const now = new Date().toISOString();
+
     const vehicleUpdated = await prisma.vehicle.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        modifiedOn: now,
+      },
     });
 
     res.status(200).json({ isError: false, data: vehicleUpdated });
@@ -95,11 +108,13 @@ export const deleteVehicle = async (req: Request, res: Response) => {
       return;
     }
 
+    const now = new Date().toISOString();
+
     const deletedVehicle = await prisma.vehicle.update({
       where: { id },
       data: {
         isActive: false,
-        modifiedOn: new Date().toISOString(),
+        modifiedOn: now,
       },
     });
 
