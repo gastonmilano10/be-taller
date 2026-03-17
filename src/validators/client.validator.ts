@@ -10,9 +10,6 @@ export const createClientSchema = z.object({
     .email("Correo electrónico no válido")
     .optional()
     .or(z.literal("")),
-
-  createdOn: z.string().min(1, "Fecha de creación es requerida"),
-  modifiedOn: z.string().min(1, "Fecha de modificación es requerida"),
 });
 
 export const getClientsSchema = z.object({
@@ -28,7 +25,6 @@ export const editClientSchema = z
     surname: z.string().min(1, "El apellido es obligatorio").optional(),
     phone: z.string().min(1, "El teléfono es obligatorio").optional(),
     address: z.string().optional(),
-    modifiedOn: z.string().min(1, "Fecha de modificación es requerida"),
     email: z
       .string()
       .email("Correo electrónico no válido")

@@ -45,8 +45,6 @@ router.get("/getAll", getAllVehicles);
  *               - year
  *               - engineCapacity
  *               - kilometers
- *               - createdOn
- *               - modifiedOn
  *               - clientId
  *             properties:
  *               number:
@@ -59,10 +57,6 @@ router.get("/getAll", getAllVehicles);
  *                 type: number
  *               engineCapacity:
  *                 type: number
- *               createdOn:
- *                 type: string
- *               modifiedOn:
- *                 type: string
  *               clientId:
  *                 type: number
  *               kilometers:
@@ -97,7 +91,6 @@ router.post("/create", validate(createVehicleSchema), createVehicle);
  *               - year
  *               - engineCapacity
  *               - kilometers
- *               - modifiedOn
  *               - clientId
  *             properties:
  *               id:
@@ -114,8 +107,6 @@ router.post("/create", validate(createVehicleSchema), createVehicle);
  *                 type: number
  *               kilometers:
  *                 type: number
- *               modifiedOn:
- *                 type: string
  *               clientId:
  *                 type: number
  *     responses:
