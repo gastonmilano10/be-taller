@@ -11,3 +11,9 @@ export const createServiceSchema = z.object({
   cost: z.number().optional(),
   observations: z.string().optional(),
 });
+
+export const getServicesSchema = z.object({
+  id: z.coerce.number().optional(),
+  vehicleId: z.coerce.number().optional(),
+  attentionDate: z.string().optional(),
+});

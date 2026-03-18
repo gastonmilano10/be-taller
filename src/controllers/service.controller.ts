@@ -20,11 +20,21 @@ export const createService = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllServices = async (req: Request, res: Response) => {
+export const getServices = async (req: Request, res: Response) => {
   try {
+    const { id, vehicleId, attentionDate } = req.query;
+
     const services = await prisma.service.findMany({
-      where: { isActive: true },
-      orderBy: { createdOn: "desc" },
+      where: {
+        isActive: true,
+        ...(id && { id: Number(id) }),
+        ...(vehicleId && { vehicleId: Number(vehicleId) }),
+        ...(attentionDate && { attentionDate: String(attentionDate) }),
+      },
+      include: {
+        vehicle: true,
+      },
+      orderBy: { attentionDate: "desc" },
     });
 
     res.status(200).json({ isError: false, data: services });
