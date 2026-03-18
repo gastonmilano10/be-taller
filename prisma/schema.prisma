@@ -49,10 +49,10 @@ model Vehicle {
 model Service {
   id                Int     @id @default(autoincrement())
   reason            String
-  cost              Float
-  attentionDate     String?
-  observations      String?
+  attentionDate     String
   vehicleKilometers Float
+  cost              Float?
+  observations      String?
 
   //Audit fields
   isActive   Boolean @default(true)

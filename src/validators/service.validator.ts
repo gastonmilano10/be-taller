@@ -2,12 +2,12 @@ import { z } from "zod";
 
 export const createServiceSchema = z.object({
   reason: z.string().min(1, "El motivo es obligatorio"),
-  cost: z.number().optional(),
-  attentionDate: z.string().optional(),
-  observations: z.string().optional(),
+  vehicleId: z.number().min(1, "El vehículo es obligatorio"),
   vehicleKilometers: z
     .number()
     .min(0, "Los kilómetros del vehículo son requeridos"),
+  attentionDate: z.string().min(1, "La fecha de atención es obligatoria"),
 
-  vehicleId: z.number().min(1, "El vehículo es obligatorio"),
+  cost: z.number().optional(),
+  observations: z.string().optional(),
 });
