@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   createVehicle,
   editVehicle,
-  getAllVehicles,
+  getVehicles,
   deleteVehicle,
 } from "../controllers/vehicle.controller";
 import { validate } from "../middlewares/validate";
@@ -16,15 +16,31 @@ const router = Router();
 
 /**
  * @swagger
- * /vehicles/getAll:
+ * /vehicles/get:
  *   get:
  *     summary: Obtener todos los vehiculos activos
  *     tags: [Vehicles]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: number
+ *         description: ID del vehículo
+ *       - in: query
+ *         name: number
+ *         schema:
+ *           type: string
+ *         description: Número de matrícula del vehículo
+ *       - in: query
+ *         name: clientId
+ *         schema:
+ *           type: number
+ *         description: ID del cliente
  *     responses:
  *       200:
  *         description: Lista de vehiculos activos
  */
-router.get("/getAll", getAllVehicles);
+router.get("/get", getVehicles);
 
 /**
  * @swagger

@@ -32,10 +32,17 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllVehicles = async (req: Request, res: Response) => {
+export const getVehicles = async (req: Request, res: Response) => {
   try {
+    const { id, number, clientId } = req.query;
+
     const vehicles = await prisma.vehicle.findMany({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        ...(id && { id: Number(id) }),
+        ...(number && { number: String(number) }),
+        ...(clientId && { clientId: Number(clientId) }),
+      },
     });
 
     res.status(200).json({ isError: false, data: vehicles });
