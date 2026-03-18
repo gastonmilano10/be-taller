@@ -34,14 +34,19 @@ router.get("/getAll", getAllServices);
  *             type: object
  *             required:
  *               - reason
- *               - cost
  *               - vehicleId
+ *               - vehicleKilometers
+ *               - attentionDate
  *             properties:
  *               reason:
  *                 type: string
- *               cost:
- *                 type: float
  *               vehicleId:
+ *                 type: number
+ *               vehicleKilometers:
+ *                 type: number
+ *               attentionDate:
+ *                 type: string
+ *               cost:
  *                 type: number
  *               observations:
  *                 type: string

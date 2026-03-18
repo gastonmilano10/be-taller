@@ -3,7 +3,15 @@ import prisma from "../prisma";
 
 export const createService = async (req: Request, res: Response) => {
   try {
-    const newService = await prisma.service.create({ data: req.body });
+    const now = new Date().toISOString();
+
+    const newService = await prisma.service.create({
+      data: {
+        ...req.body,
+        createdOn: now,
+        modifiedOn: now,
+      },
+    });
 
     res.status(201).json({ isError: false, data: newService });
   } catch (error) {

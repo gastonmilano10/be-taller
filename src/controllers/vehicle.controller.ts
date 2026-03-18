@@ -15,7 +15,15 @@ export const createVehicle = async (req: Request, res: Response) => {
       return;
     }
 
-    const newVehicle = await prisma.vehicle.create({ data: req.body });
+    const now = new Date().toISOString();
+
+    const newVehicle = await prisma.vehicle.create({
+      data: {
+        ...req.body,
+        createdOn: now,
+        modifiedOn: now,
+      },
+    });
 
     res.status(201).json({ isError: false, data: newVehicle });
   } catch (error) {
@@ -24,10 +32,17 @@ export const createVehicle = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllVehicles = async (req: Request, res: Response) => {
+export const getVehicles = async (req: Request, res: Response) => {
   try {
+    const { id, number, clientId } = req.query;
+
     const vehicles = await prisma.vehicle.findMany({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        ...(id && { id: Number(id) }),
+        ...(number && { number: String(number) }),
+        ...(clientId && { clientId: Number(clientId) }),
+      },
     });
 
     res.status(200).json({ isError: false, data: vehicles });
@@ -70,9 +85,14 @@ export const editVehicle = async (req: Request, res: Response) => {
       }
     }
 
+    const now = new Date().toISOString();
+
     const vehicleUpdated = await prisma.vehicle.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        modifiedOn: now,
+      },
     });
 
     res.status(200).json({ isError: false, data: vehicleUpdated });
@@ -95,11 +115,13 @@ export const deleteVehicle = async (req: Request, res: Response) => {
       return;
     }
 
+    const now = new Date().toISOString();
+
     const deletedVehicle = await prisma.vehicle.update({
       where: { id },
       data: {
         isActive: false,
-        modifiedOn: new Date().toISOString(),
+        modifiedOn: now,
       },
     });
 
