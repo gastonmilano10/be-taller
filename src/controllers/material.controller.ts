@@ -67,6 +67,38 @@ export const editMaterial = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteMaterial = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+
+    const existingMaterial = await prisma.material.findFirst({
+      where: { id, isActive: true },
+    });
+
+    if (!existingMaterial) {
+      res.status(404).json({ isError: true, error: "Material no encontrado" });
+      return;
+    }
+
+    const now = new Date().toISOString();
+
+    const deletedMaterial = await prisma.material.update({
+      where: { id },
+      data: {
+        isActive: false,
+        modifiedOn: now,
+      },
+    });
+
+    res.status(200).json({ isError: false, data: deletedMaterial });
+  } catch (error) {
+    console.error("Error al eliminar material:", error);
+    res
+      .status(500)
+      .json({ isError: true, error: "Error al eliminar material" });
+  }
+};
+
 export const getMaterialsByService = async (req: Request, res: Response) => {
   try {
     const { serviceId } = req.query;

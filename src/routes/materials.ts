@@ -3,11 +3,13 @@ import { validate } from "../middlewares/validate";
 import {
   createMaterialSchema,
   editMaterialSchema,
+  deleteMaterialSchema,
   getMaterialsSchema,
 } from "../validators/material.validator";
 import {
   createMaterial,
   editMaterial,
+  deleteMaterial,
   getMaterialsByService,
 } from "../controllers/material.controller";
 
@@ -114,5 +116,34 @@ router.post("/create", validate(createMaterialSchema), createMaterial);
  *         description: Error al editar material
  */
 router.put("/edit", validate(editMaterialSchema), editMaterial);
+
+/**
+ * @swagger
+ * /materials/delete:
+ *   delete:
+ *     summary: Eliminar un material (baja lógica)
+ *     tags: [Materials]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Material eliminado exitosamente
+ *       400:
+ *         description: Error de validación
+ *       404:
+ *         description: Material no encontrado
+ *       500:
+ *         description: Error al eliminar material
+ */
+router.delete("/delete", validate(deleteMaterialSchema), deleteMaterial);
 
 export default router;
