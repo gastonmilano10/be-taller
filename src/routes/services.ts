@@ -1,24 +1,42 @@
 import { Router } from "express";
 import { validate } from "../middlewares/validate";
-import { createServiceSchema } from "../validators/service.validator";
 import {
-  createService,
-  getAllServices,
-} from "../controllers/service.controller";
+  createServiceSchema,
+  getServicesSchema,
+} from "../validators/service.validator";
+import { createService, getServices } from "../controllers/service.controller";
 
 const router = Router();
 
 /**
  * @swagger
- * /services/getAll:
+ * /services/get:
  *   get:
- *     summary: Obtener todos los servicios activos
+ *     summary: Obtener servicios (con filtros opcionales)
  *     tags: [Services]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: number
+ *         description: ID del servicio
+ *       - in: query
+ *         name: vehicleId
+ *         schema:
+ *           type: number
+ *         description: ID del vehículo
+ *       - in: query
+ *         name: attentionDate
+ *         schema:
+ *           type: string
+ *         description: Fecha de atención
  *     responses:
  *       200:
  *         description: Lista de servicios activos
+ *       400:
+ *         description: Error de validación
  */
-router.get("/getAll", getAllServices);
+router.get("/get", validate(getServicesSchema, "query"), getServices);
 
 /**
  * @swagger
