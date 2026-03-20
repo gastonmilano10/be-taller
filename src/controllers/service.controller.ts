@@ -33,7 +33,11 @@ export const getServices = async (req: Request, res: Response) => {
       },
       include: {
         vehicle: true,
+        materials: {
+          where: { isActive: true },
+        },
       },
+
       orderBy: { attentionDate: "desc" },
     });
 

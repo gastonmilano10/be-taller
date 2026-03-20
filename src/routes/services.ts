@@ -61,11 +61,11 @@ router.get("/get", validate(getServicesSchema, "query"), getServices);
  *               vehicleId:
  *                 type: number
  *               vehicleKilometers:
- *                 type: number
+ *                 type: string
  *               attentionDate:
  *                 type: string
  *               cost:
- *                 type: number
+ *                 type: string
  *               observations:
  *                 type: string
  *     responses:
