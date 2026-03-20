@@ -36,7 +36,11 @@ const router = Router();
  *       500:
  *         description: Error al obtener materiales
  */
-router.get("/get", validate(getMaterialsSchema, "query"), getMaterialsByService);
+router.get(
+  "/get",
+  validate(getMaterialsSchema, "query"),
+  getMaterialsByService,
+);
 
 /**
  * @swagger
@@ -53,8 +57,6 @@ router.get("/get", validate(getMaterialsSchema, "query"), getMaterialsByService)
  *             required:
  *               - serviceId
  *               - description
- *               - cost
- *               - quantity
  *             properties:
  *               serviceId:
  *                 type: number
@@ -92,8 +94,6 @@ router.post("/create", validate(createMaterialSchema), createMaterial);
  *               - id
  *               - serviceId
  *               - description
- *               - cost
- *               - quantity
  *             properties:
  *               id:
  *                 type: number
