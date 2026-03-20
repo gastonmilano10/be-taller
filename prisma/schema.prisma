@@ -70,10 +70,10 @@ model Service {
 }
 
 model Material {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   description String
-  quantity    Float
-  cost        Float
+  quantity    String?
+  cost        String?
 
   //Audit fields
   isActive   Boolean @default(true)
@@ -86,10 +86,10 @@ model Material {
 }
 
 model Labor {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   description String
-  quantity    Float
-  cost        Float
+  quantity    String?
+  cost        String?
 
   //Audit fields
   isActive   Boolean @default(true)
