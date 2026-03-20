@@ -30,8 +30,8 @@ model Vehicle {
   brand          String
   model          String
   year           Int
-  engineCapacity Float
-  kilometers     Float
+  engineCapacity String
+  kilometers     String
 
   //Audit fields
   isActive   Boolean @default(true)
@@ -50,8 +50,8 @@ model Service {
   id                Int     @id @default(autoincrement())
   reason            String
   attentionDate     String
-  vehicleKilometers Float
-  cost              Float?
+  vehicleKilometers String
+  cost              String?
   observations      String?
 
   //Audit fields
