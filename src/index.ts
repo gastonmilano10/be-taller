@@ -10,8 +10,9 @@ import { swaggerSpec } from "./swagger";
 import clientsRoutes from "./routes/clients";
 import vehiclesRoutes from "./routes/vehicles";
 import servicesRoutes from "./routes/services";
+import serviceStatesRoutes from "./routes/service-states";
 import materialsRoutes from "./routes/materials";
-import laborsRoutes from "./routes/materials";
+import laborsRoutes from "./routes/labors";
 
 const port = process.env.PORT || 3001;
 
@@ -33,6 +34,9 @@ app.use("/vehicles", vehiclesRoutes);
 
 //SERVICES
 app.use("/services", servicesRoutes);
+
+//SERVICE STATES
+app.use("/service-states", serviceStatesRoutes);
 
 //MATERIALS
 app.use("/materials", materialsRoutes);

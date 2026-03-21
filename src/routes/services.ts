@@ -12,7 +12,7 @@ const router = Router();
  * @swagger
  * /services/get:
  *   get:
- *     summary: Obtener servicios (con filtros opcionales)
+ *     summary: Obtener servicios (con filtros opcionales) con estado actual e historial
  *     tags: [Services]
  *     parameters:
  *       - in: query
@@ -32,7 +32,7 @@ const router = Router();
  *         description: Fecha de atención
  *     responses:
  *       200:
- *         description: Lista de servicios activos
+ *         description: Lista de servicios activos con currentState y stateHistory
  *       400:
  *         description: Error de validación
  */
