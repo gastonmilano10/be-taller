@@ -124,6 +124,13 @@ export const updateServiceStatus = async (req: Request, res: Response) => {
         },
       });
 
+      await tx.service.update({
+        where: { id: serviceId },
+        data: {
+          modifiedOn: now,
+        },
+      });
+
       const historyRows = await tx.relationServiceStateService.findMany({
         where: {
           serviceId,
