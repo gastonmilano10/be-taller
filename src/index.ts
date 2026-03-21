@@ -11,6 +11,7 @@ import clientsRoutes from "./routes/clients";
 import vehiclesRoutes from "./routes/vehicles";
 import servicesRoutes from "./routes/services";
 import materialsRoutes from "./routes/materials";
+import laborsRoutes from "./routes/materials";
 
 const port = process.env.PORT || 3001;
 
@@ -35,6 +36,9 @@ app.use("/services", servicesRoutes);
 
 //MATERIALS
 app.use("/materials", materialsRoutes);
+
+//LABORS
+app.use("/labors", laborsRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
