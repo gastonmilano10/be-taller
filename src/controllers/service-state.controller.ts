@@ -172,17 +172,13 @@ export const updateServiceStatus = async (req: Request, res: Response) => {
 
     res.status(200).json({
       isError: false,
-      data: {
-        serviceId,
-        historyRowId: result.historyRowId,
-        currentState,
-        stateHistory,
-      },
+      data: currentState,
     });
   } catch (error) {
     console.error("Error al actualizar estado del servicio:", error);
-    res
-      .status(500)
-      .json({ isError: true, error: "Error al actualizar estado del servicio" });
+    res.status(500).json({
+      isError: true,
+      error: "Error al actualizar estado del servicio",
+    });
   }
 };
