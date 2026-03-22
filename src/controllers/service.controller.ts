@@ -117,3 +117,33 @@ export const getServices = async (req: Request, res: Response) => {
       .json({ isError: true, error: "Error al obtener servicios" });
   }
 };
+
+export const editService = async (req: Request, res: Response) => {
+  try {
+    const { id, ...data } = req.body;
+
+    const existingService = await prisma.service.findFirst({
+      where: { id, isActive: true },
+    });
+
+    if (!existingService) {
+      res.status(404).json({ isError: true, error: "Servicio no encontrado" });
+      return;
+    }
+
+    const now = new Date().toISOString();
+
+    const updatedService = await prisma.service.update({
+      where: { id },
+      data: {
+        ...data,
+        modifiedOn: now,
+      },
+    });
+
+    res.status(200).json({ isError: false, data: updatedService });
+  } catch (error) {
+    console.error("Error al editar servicio:", error);
+    res.status(500).json({ isError: true, error: "Error al editar servicio" });
+  }
+};
