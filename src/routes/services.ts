@@ -3,8 +3,9 @@ import { validate } from "../middlewares/validate";
 import {
   createServiceSchema,
   getServicesSchema,
+  editServiceSchema,
 } from "../validators/service.validator";
-import { createService, getServices } from "../controllers/service.controller";
+import { createService, getServices, editService } from "../controllers/service.controller";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ const router = Router();
  * @swagger
  * /services/get:
  *   get:
- *     summary: Obtener servicios (con filtros opcionales)
+ *     summary: Obtener servicios (con filtros opcionales) con estado actual e historial
  *     tags: [Services]
  *     parameters:
  *       - in: query
@@ -32,7 +33,7 @@ const router = Router();
  *         description: Fecha de atención
  *     responses:
  *       200:
- *         description: Lista de servicios activos
+ *         description: Lista de servicios activos con currentState y stateHistory
  *       400:
  *         description: Error de validación
  */
@@ -77,5 +78,50 @@ router.get("/get", validate(getServicesSchema, "query"), getServices);
  *         description: Error interno del servidor
  */
 router.post("/create", validate(createServiceSchema), createService);
+
+/**
+ * @swagger
+ * /services/edit:
+ *   put:
+ *     summary: Editar un servicio existente
+ *     tags: [Services]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - reason
+ *               - vehicleId
+ *               - vehicleKilometers
+ *               - attentionDate
+ *             properties:
+ *               id:
+ *                 type: number
+ *               reason:
+ *                 type: string
+ *               vehicleId:
+ *                 type: number
+ *               vehicleKilometers:
+ *                 type: string
+ *               attentionDate:
+ *                 type: string
+ *               cost:
+ *                 type: string
+ *               observations:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Servicio editado exitosamente
+ *       400:
+ *         description: Error de validación
+ *       404:
+ *         description: Servicio no encontrado
+ *       500:
+ *         description: Error al editar servicio
+ */
+router.put("/edit", validate(editServiceSchema), editService);
 
 export default router;

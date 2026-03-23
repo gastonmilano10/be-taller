@@ -12,6 +12,10 @@ export const createServiceSchema = z.object({
   observations: z.string().optional(),
 });
 
+export const editServiceSchema = createServiceSchema.extend({
+  id: z.number().min(1, "El ID del servicio es requerido"),
+});
+
 export const getServicesSchema = z.object({
   id: z.coerce.number().optional(),
   vehicleId: z.coerce.number().optional(),
