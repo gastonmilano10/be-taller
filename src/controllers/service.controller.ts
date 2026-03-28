@@ -32,6 +32,26 @@ export const createService = async (req: Request, res: Response) => {
         },
       });
 
+      // Obtener vehículo y actualizar kilometraje si es necesario
+      const vehicle = await tx.vehicle.findUnique({
+        where: { id: createdService.vehicleId },
+      });
+
+      if (vehicle) {
+        const currentKilometers = parseFloat(vehicle.kilometers);
+        const newKilometers = parseFloat(createdService.vehicleKilometers);
+
+        if (newKilometers > currentKilometers) {
+          await tx.vehicle.update({
+            where: { id: vehicle.id },
+            data: {
+              kilometers: createdService.vehicleKilometers,
+              modifiedOn: now,
+            },
+          });
+        }
+      }
+
       await tx.relationServiceStateService.create({
         data: {
           serviceId: createdService.id,
@@ -133,12 +153,38 @@ export const editService = async (req: Request, res: Response) => {
 
     const now = new Date().toISOString();
 
-    const updatedService = await prisma.service.update({
-      where: { id },
-      data: {
-        ...data,
-        modifiedOn: now,
-      },
+    const updatedService = await prisma.$transaction(async (tx) => {
+      const updated = await tx.service.update({
+        where: { id },
+        data: {
+          ...data,
+          modifiedOn: now,
+        },
+      });
+
+      // Obtener vehículo y actualizar kilometraje si es necesario
+      if (data.vehicleKilometers) {
+        const vehicle = await tx.vehicle.findUnique({
+          where: { id: updated.vehicleId },
+        });
+
+        if (vehicle) {
+          const currentKilometers = parseFloat(vehicle.kilometers);
+          const newKilometers = parseFloat(data.vehicleKilometers);
+
+          if (newKilometers > currentKilometers) {
+            await tx.vehicle.update({
+              where: { id: vehicle.id },
+              data: {
+                kilometers: data.vehicleKilometers,
+                modifiedOn: now,
+              },
+            });
+          }
+        }
+      }
+
+      return updated;
     });
 
     res.status(200).json({ isError: false, data: updatedService });
