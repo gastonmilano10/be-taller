@@ -72,7 +72,17 @@ export const createService = async (req: Request, res: Response) => {
 
 export const getServices = async (req: Request, res: Response) => {
   try {
-    const { id, vehicleId, attentionDate } = req.query;
+    const { id, vehicleId, attentionDateFrom, attentionDateTo } = req.query;
+
+    const attentionDateFilter =
+      attentionDateFrom || attentionDateTo
+        ? {
+            attentionDate: {
+              ...(attentionDateFrom && { gte: String(attentionDateFrom) }),
+              ...(attentionDateTo && { lte: String(attentionDateTo) }),
+            },
+          }
+        : {};
 
     await ensureServiceStatesCatalog(prisma);
 
@@ -81,7 +91,7 @@ export const getServices = async (req: Request, res: Response) => {
         isActive: true,
         ...(id && { id: Number(id) }),
         ...(vehicleId && { vehicleId: Number(vehicleId) }),
-        ...(attentionDate && { attentionDate: String(attentionDate) }),
+        ...attentionDateFilter,
       },
       include: {
         vehicle: true,

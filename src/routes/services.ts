@@ -27,10 +27,15 @@ const router = Router();
  *           type: number
  *         description: ID del vehículo
  *       - in: query
- *         name: attentionDate
+ *         name: attentionDateFrom
  *         schema:
  *           type: string
- *         description: Fecha de atención
+ *         description: Fecha/hora inicial del rango (inclusive, formato ISO datetime)
+ *       - in: query
+ *         name: attentionDateTo
+ *         schema:
+ *           type: string
+ *         description: Fecha/hora final del rango (inclusive, formato ISO datetime)
  *     responses:
  *       200:
  *         description: Lista de servicios activos con currentState y stateHistory

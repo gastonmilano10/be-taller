@@ -19,5 +19,6 @@ export const editServiceSchema = createServiceSchema.extend({
 export const getServicesSchema = z.object({
   id: z.coerce.number().optional(),
   vehicleId: z.coerce.number().optional(),
-  attentionDate: z.string().optional(),
+  attentionDateFrom: z.string().datetime({ offset: true }).optional(),
+  attentionDateTo: z.string().datetime({ offset: true }).optional(),
 });
