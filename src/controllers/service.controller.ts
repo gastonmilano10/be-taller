@@ -1,9 +1,67 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
+import {
+  ensureServiceStatesCatalog,
+  formatServiceStateHistory,
+  getCurrentServiceState,
+} from "./service-state.helpers";
 
 export const createService = async (req: Request, res: Response) => {
   try {
-    const newService = await prisma.service.create({ data: req.body });
+    const now = new Date().toISOString();
+
+    const newService = await prisma.$transaction(async (tx) => {
+      await ensureServiceStatesCatalog(tx);
+
+      const createdState = await tx.serviceState.findFirst({
+        where: {
+          code: "CREADO",
+          isActive: true,
+        },
+      });
+
+      if (!createdState) {
+        throw new Error("No se encontro el estado inicial CREADO");
+      }
+
+      const createdService = await tx.service.create({
+        data: {
+          ...req.body,
+          createdOn: now,
+          modifiedOn: now,
+        },
+      });
+
+      // Obtener vehículo y actualizar kilometraje si es necesario
+      const vehicle = await tx.vehicle.findUnique({
+        where: { id: createdService.vehicleId },
+      });
+
+      if (vehicle) {
+        const currentKilometers = parseFloat(vehicle.kilometers);
+        const newKilometers = parseFloat(createdService.vehicleKilometers);
+
+        if (newKilometers > currentKilometers) {
+          await tx.vehicle.update({
+            where: { id: vehicle.id },
+            data: {
+              kilometers: createdService.vehicleKilometers,
+              modifiedOn: now,
+            },
+          });
+        }
+      }
+
+      await tx.relationServiceStateService.create({
+        data: {
+          serviceId: createdService.id,
+          serviceStateId: createdState.id,
+          assignedOn: now,
+        },
+      });
+
+      return createdService;
+    });
 
     res.status(201).json({ isError: false, data: newService });
   } catch (error) {
@@ -12,18 +70,136 @@ export const createService = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllServices = async (req: Request, res: Response) => {
+export const getServices = async (req: Request, res: Response) => {
   try {
+    const { id, vehicleId, attentionDateFrom, attentionDateTo } = req.query;
+
+    const attentionDateFilter =
+      attentionDateFrom || attentionDateTo
+        ? {
+            attentionDate: {
+              ...(attentionDateFrom && { gte: String(attentionDateFrom) }),
+              ...(attentionDateTo && { lte: String(attentionDateTo) }),
+            },
+          }
+        : {};
+
+    await ensureServiceStatesCatalog(prisma);
+
     const services = await prisma.service.findMany({
-      where: { isActive: true },
-      orderBy: { createdOn: "desc" },
+      where: {
+        isActive: true,
+        ...(id && { id: Number(id) }),
+        ...(vehicleId && { vehicleId: Number(vehicleId) }),
+        ...attentionDateFilter,
+      },
+      include: {
+        vehicle: true,
+        materials: {
+          where: { isActive: true },
+        },
+        labors: {
+          where: { isActive: true },
+        },
+        RelationServiceStateService: {
+          where: {
+            serviceState: {
+              isActive: true,
+            },
+          },
+          include: {
+            serviceState: {
+              select: {
+                id: true,
+                code: true,
+                description: true,
+              },
+            },
+          },
+          orderBy: [
+            { assignedOn: "desc" },
+            { id: "desc" },
+          ],
+        },
+      },
+
+      orderBy: { attentionDate: "desc" },
     });
 
-    res.status(200).json({ isError: false, data: services });
+    const servicesWithStates = services.map(
+      ({ RelationServiceStateService, ...service }) => {
+        const stateHistory = formatServiceStateHistory(RelationServiceStateService);
+        const currentState = getCurrentServiceState(stateHistory);
+
+        return {
+          ...service,
+          currentState,
+          stateHistory,
+        };
+      },
+    );
+
+    res.status(200).json({ isError: false, data: servicesWithStates });
   } catch (error) {
     console.error("Error al obtener servicios:", error);
     res
       .status(500)
       .json({ isError: true, error: "Error al obtener servicios" });
+  }
+};
+
+export const editService = async (req: Request, res: Response) => {
+  try {
+    const { id, ...data } = req.body;
+
+    const existingService = await prisma.service.findFirst({
+      where: { id, isActive: true },
+    });
+
+    if (!existingService) {
+      res.status(404).json({ isError: true, error: "Servicio no encontrado" });
+      return;
+    }
+
+    const now = new Date().toISOString();
+
+    const updatedService = await prisma.$transaction(async (tx) => {
+      const updated = await tx.service.update({
+        where: { id },
+        data: {
+          ...data,
+          modifiedOn: now,
+        },
+      });
+
+      // Obtener vehículo y actualizar kilometraje si es necesario
+      if (data.vehicleKilometers) {
+        const vehicle = await tx.vehicle.findUnique({
+          where: { id: updated.vehicleId },
+        });
+
+        if (vehicle) {
+          const currentKilometers = parseFloat(vehicle.kilometers);
+          const newKilometers = parseFloat(data.vehicleKilometers);
+
+          if (newKilometers > currentKilometers) {
+            await tx.vehicle.update({
+              where: { id: vehicle.id },
+              data: {
+                kilometers: data.vehicleKilometers,
+                modifiedOn: now,
+              },
+            });
+          }
+        }
+      }
+
+      return updated;
+    });
+
+    res.status(200).json({ isError: false, data: updatedService });
+  } catch (error) {
+    console.error("Error al editar servicio:", error);
+    res.status(500).json({ isError: true, error: "Error al editar servicio" });
   }
 };

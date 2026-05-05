@@ -5,7 +5,22 @@ export const createVehicleSchema = z.object({
   brand: z.string().min(1, "La marca es requerida"),
   model: z.string().min(1, "El modelo es requerido"),
   year: z.number().min(1, "El año es requerido"),
-  engineCapacity: z.number().min(1, "Las cilindradas son requeridas"),
+  engineCapacity: z.string().min(1, "Las cilindradas son requeridas"),
+  kilometers: z.string().min(0, "Los kilómetros son requeridos"),
 
   clientId: z.number().int().min(1, "El cliente es requerido"),
+});
+
+export const editVehicleSchema = createVehicleSchema.extend({
+  id: z.number().min(1, "El ID del vehículo es requerido"),
+});
+
+export const deleteVehicleSchema = z.object({
+  id: z.number().min(1, "El ID del vehículo es requerido"),
+});
+
+export const getVehicleSchema = z.object({
+  id: z.coerce.number().optional(),
+  clientId: z.coerce.number().optional(),
+  number: z.string().optional(),
 });

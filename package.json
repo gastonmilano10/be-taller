@@ -4,6 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
+    "check:3001": "powershell -NoProfile -Command \"$p=(Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique); if($p){Get-Process -Id $p | Select-Object Id,ProcessName,Path}else{Write-Output 'PUERTO_LIBRE'}\"",
+    "stop:3001": "powershell -NoProfile -Command \"$p=(Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique); if($p){Stop-Process -Id $p -Force; Write-Output 'PROCESO_DETENIDO'}else{Write-Output 'NADA_EN_3001'}\"",
+    "restart:3001": "npm run stop:3001 && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "prisma generate"
   },

@@ -1,11 +1,24 @@
 import { z } from "zod";
 
 export const createServiceSchema = z.object({
+  vehicleId: z.number().min(1, "El vehículo es obligatorio"),
   reason: z.string().min(1, "El motivo es obligatorio"),
-  cost: z.number().optional(),
-  attentionDate: z.string().optional(),
-  observations: z.string().optional(),
+  vehicleKilometers: z
+    .string()
+    .min(0, "Los kilómetros del vehículo son requeridos"),
+  attentionDate: z.string().min(1, "La fecha de atención es obligatoria"),
 
-  //Relations
-  vehicleId: z.number().min(1, "El es obligatorio"),
+  cost: z.string().optional(),
+  observations: z.string().optional(),
+});
+
+export const editServiceSchema = createServiceSchema.extend({
+  id: z.number().min(1, "El ID del servicio es requerido"),
+});
+
+export const getServicesSchema = z.object({
+  id: z.coerce.number().optional(),
+  vehicleId: z.coerce.number().optional(),
+  attentionDateFrom: z.string().datetime({ offset: true }).optional(),
+  attentionDateTo: z.string().datetime({ offset: true }).optional(),
 });

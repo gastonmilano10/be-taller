@@ -1,4 +1,5 @@
 import swaggerJSDoc from "swagger-jsdoc";
+import path from "path";
 
 export const swaggerSpec = swaggerJSDoc({
   definition: {
@@ -6,7 +7,8 @@ export const swaggerSpec = swaggerJSDoc({
     info: {
       title: "Taller API",
       version: "1.0.0",
-      description: "Documentación de la API para el sistema de gestión de taller",
+      description:
+        "Documentación de la API para el sistema de gestión de taller",
     },
     servers: [
       {
@@ -14,5 +16,8 @@ export const swaggerSpec = swaggerJSDoc({
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // Ruta donde escribiremos los comentarios Swagger
+  apis: [
+    path.join(__dirname, "routes", "*.ts"),
+    path.join(__dirname, "routes", "*.js"),
+  ],
 });

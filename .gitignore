@@ -11,3 +11,6 @@ generated/
 
 # Compilados de TypeScript
 dist/
+
+# Skills
+.agents/skills

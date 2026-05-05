@@ -1,6 +1,14 @@
 import { Router } from "express";
-import { createClient, getAllClients } from "../controllers/client.controller";
-import { createClientSchema } from "../validators/client.validator";
+import {
+  createClient,
+  editClient,
+  getClients,
+} from "../controllers/client.controller";
+import {
+  createClientSchema,
+  editClientSchema,
+  getClientsSchema,
+} from "../validators/client.validator";
 import { validate } from "../middlewares/validate";
 import { authenticate } from "../middlewares/auth.middleware";
 import { authorize } from "../middlewares/role.middleware";
@@ -9,15 +17,33 @@ const router = Router();
 
 /**
  * @swagger
- * /clients/getAll:
+ * /clients/get:
  *   get:
- *     summary: Obtener todos los clientes activos
+ *     summary: Obtener clientes (con filtros opcionales)
  *     tags: [Clients]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: number
+ *         description: ID del cliente
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Nombre del cliente
+ *       - in: query
+ *         name: surname
+ *         schema:
+ *           type: string
+ *         description: Apellido del cliente
  *     responses:
  *       200:
- *         description: Lista de clientes activos
+ *         description: Lista de clientes
+ *       400:
+ *         description: Error de validación
  */
-router.get("/getAll", getAllClients);
+router.get("/get", validate(getClientsSchema, "query"), getClients);
 
 /**
  * @swagger
@@ -61,5 +87,44 @@ router.post(
   validate(createClientSchema),
   createClient,
 );
+
+/**
+ * @swagger
+ * /clients/edit:
+ *   put:
+ *     summary: Editar un cliente existente
+ *     tags: [Clients]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: number
+ *               name:
+ *                 type: string
+ *               surname:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cliente editado exitosamente
+ *       400:
+ *         description: Error de validación
+ *       404:
+ *         description: Cliente no encontrado
+ *       500:
+ *         description: Error al editar cliente
+ */
+router.put("/edit", validate(editClientSchema), editClient);
 
 export default router;
