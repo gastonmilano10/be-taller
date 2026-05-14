@@ -1,5 +1,7 @@
-import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express, { Express, Request, Response } from "express";
 import cors from "cors";
 
 //SWAGGER
@@ -7,6 +9,7 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger";
 
 //ROUTES
+import authRoutes from "./routes/auth";
 import clientsRoutes from "./routes/clients";
 import vehiclesRoutes from "./routes/vehicles";
 import servicesRoutes from "./routes/services";
@@ -16,9 +19,15 @@ import laborsRoutes from "./routes/labors";
 
 const rateLimit = require("express-rate-limit");
 
-const port = process.env.PORT || 3001;
+// Validación temprana de variables críticas
+const requiredEnv = ["JWT_SECRET", "JWT_REFRESH_SECRET", "GOOGLE_CLIENT_ID", "DATABASE_URL"];
+const missingEnv = requiredEnv.filter((v) => !process.env[v]);
+if (missingEnv.length) {
+  console.error(`[server] Faltan variables de entorno: ${missingEnv.join(", ")}`);
+  process.exit(1);
+}
 
-dotenv.config();
+const port = process.env.PORT || 3001;
 
 const app: Express = express();
 
@@ -38,6 +47,9 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("SERVIDOR CORRIENDO OKKK");
 });
+
+//AUTH
+app.use("/auth", authRoutes);
 
 //CLIENTS
 app.use("/clients", clientsRoutes);
