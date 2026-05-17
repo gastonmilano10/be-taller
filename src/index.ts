@@ -1,8 +1,11 @@
 import dotenv from "dotenv";
-dotenv.config();
+// Carga .env.local primero (override) y luego .env como fallback
+dotenv.config({ path: ".env.local" });
+dotenv.config({ override: false });
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
+import helmet from "helmet";
 
 //SWAGGER
 import swaggerUi from "swagger-ui-express";
@@ -19,7 +22,7 @@ import laborsRoutes from "./routes/labors";
 
 const rateLimit = require("express-rate-limit");
 
-// Validación temprana de variables críticas
+// Validación temprana de variables críticas — falla al inicio si falta algo
 const requiredEnv = ["JWT_SECRET", "JWT_REFRESH_SECRET", "GOOGLE_CLIENT_ID", "DATABASE_URL"];
 const missingEnv = requiredEnv.filter((v) => !process.env[v]);
 if (missingEnv.length) {
@@ -31,25 +34,55 @@ const port = process.env.PORT || 3001;
 
 const app: Express = express();
 
-// SE DEFINE RATE LIMIT RUTE, PARA LIMITAR EL NUMERO DE PETICIONES QUE SE PUEDEN HACER DESDE UNA MISMA IP EN UN PERIODO DE TIEMPO DETERMINADO
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // lIMITA CADA IP A 100 PETICIONES POR CADA 15 MINUTOS
-  message: "Demasiadas peticiones, por favor intente nuevamente más tarde.", // MENSAJE DE ERROR CUANDO SE SUPERA EL LIMITE
-});
+// Headers de seguridad HTTP (XSS, clickjacking, MIME sniffing, etc.)
+app.use(helmet());
 
-// SE APLICA RATE LIMIT A TODAS LAS RUTAS
+// Rate limit global: 100 req cada 15 min por IP
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Demasiadas peticiones, por favor intente nuevamente más tarde.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 app.use(limiter);
 
-app.use(cors());
-app.use(express.json());
+// Rate limit estricto para auth: 10 intentos por minuto por IP (anti fuerza bruta)
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: "Demasiados intentos de autenticación, intente nuevamente en un minuto.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// CORS: solo orígenes en FRONTEND_URL, con soporte credentials (necesario para cookies en Fase 3)
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Sin origin: curl, Postman, health checks — permitir
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error(`Origen no permitido por CORS: ${origin}`));
+    },
+    credentials: true,
+  }),
+);
+
+// Limitar tamaño de payload para evitar DoS por body gigante
+app.use(express.json({ limit: "100kb" }));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("SERVIDOR CORRIENDO OKKK");
 });
 
-//AUTH
-app.use("/auth", authRoutes);
+//AUTH (rate limit estricto)
+app.use("/auth", authLimiter, authRoutes);
 
 //CLIENTS
 app.use("/clients", clientsRoutes);
