@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 import { User } from "../types/user.types";
@@ -21,3 +22,10 @@ export const createRefreshToken = (user: User) => {
     expiresIn: "7d",
   });
 };
+
+/** SHA-256 del token. Se guarda en BD, nunca el token plano. */
+export const hashToken = (token: string): string =>
+  crypto.createHash("sha256").update(token).digest("hex");
+
+/** 7 días en ms — para cookie maxAge y expiresAt en BD. */
+export const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;

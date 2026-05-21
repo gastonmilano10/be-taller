@@ -157,6 +157,24 @@ model User {
   isActive   Boolean @default(true)
   createdOn  String  @default("")
   modifiedOn String  @default("")
+
+  //Relations
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id         Int       @id @default(autoincrement())
+  tokenHash  String    @unique
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  replacedBy String?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
 }
 
 enum Role {

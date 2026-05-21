@@ -6,6 +6,7 @@ dotenv.config({ override: false });
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 //SWAGGER
 import swaggerUi from "swagger-ui-express";
@@ -36,6 +37,9 @@ const app: Express = express();
 
 // Headers de seguridad HTTP (XSS, clickjacking, MIME sniffing, etc.)
 app.use(helmet());
+
+// Parsear cookies (necesario para leer refreshToken HttpOnly)
+app.use(cookieParser());
 
 // Rate limit global: 100 req cada 15 min por IP
 const limiter = rateLimit({
