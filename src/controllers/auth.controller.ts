@@ -8,7 +8,7 @@ import {
   createRefreshToken,
   hashToken,
   REFRESH_TOKEN_TTL_MS,
-} from "../services/auth.servide";
+} from "../services/auth.service";
 import { User, UserRole } from "../types/user.types";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -33,7 +33,7 @@ const googleLoginSchema = z.object({
 
 export const googleLogin: RequestHandler = async (req, res) => {
   const parsed = googleLoginSchema.safeParse(req.body);
-  
+
   if (!parsed.success) {
     res.status(400).json({ message: parsed.error.errors[0].message });
     return;
