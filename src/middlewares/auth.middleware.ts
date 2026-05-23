@@ -10,11 +10,13 @@ export const authenticate: RequestHandler = (req, res, next) => {
     return;
   }
 
-  //OBTENEMOS EL TOKEN
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as User;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string, {
+      issuer: "be-taller",
+      audience: "fe-taller",
+    }) as User;
 
     req.user = decoded;
 

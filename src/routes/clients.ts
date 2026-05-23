@@ -43,7 +43,12 @@ const router = Router();
  *       400:
  *         description: Error de validación
  */
-router.get("/get", validate(getClientsSchema, "query"), getClients);
+router.get(
+  "/get",
+  authenticate,
+  validate(getClientsSchema, "query"),
+  getClients,
+);
 
 /**
  * @swagger
@@ -125,6 +130,6 @@ router.post(
  *       500:
  *         description: Error al editar cliente
  */
-router.put("/edit", validate(editClientSchema), editClient);
+router.put("/edit", authenticate, validate(editClientSchema), editClient);
 
 export default router;

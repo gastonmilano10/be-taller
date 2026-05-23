@@ -13,6 +13,8 @@ export const createAccessToken = (user: User) => {
     process.env.JWT_SECRET!,
     {
       expiresIn: "30m",
+      issuer: "be-taller",
+      audience: "fe-taller",
     },
   );
 };
@@ -20,6 +22,8 @@ export const createAccessToken = (user: User) => {
 export const createRefreshToken = (user: User) => {
   return jwt.sign({ userId: user.id }, process.env.JWT_REFRESH_SECRET!, {
     expiresIn: "7d",
+    issuer: "be-taller",
+    audience: "fe-taller",
   });
 };
 

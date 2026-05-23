@@ -6,6 +6,7 @@ import {
   editServiceSchema,
 } from "../validators/service.validator";
 import { createService, getServices, editService } from "../controllers/service.controller";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -42,7 +43,7 @@ const router = Router();
  *       400:
  *         description: Error de validación
  */
-router.get("/get", validate(getServicesSchema, "query"), getServices);
+router.get("/get", authenticate, validate(getServicesSchema, "query"), getServices);
 
 /**
  * @swagger
@@ -82,7 +83,7 @@ router.get("/get", validate(getServicesSchema, "query"), getServices);
  *       500:
  *         description: Error interno del servidor
  */
-router.post("/create", validate(createServiceSchema), createService);
+router.post("/create", authenticate, validate(createServiceSchema), createService);
 
 /**
  * @swagger
@@ -127,6 +128,6 @@ router.post("/create", validate(createServiceSchema), createService);
  *       500:
  *         description: Error al editar servicio
  */
-router.put("/edit", validate(editServiceSchema), editService);
+router.put("/edit", authenticate, validate(editServiceSchema), editService);
 
 export default router;

@@ -7,6 +7,7 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import prisma from "./prisma";
 
 //SWAGGER
 import swaggerUi from "swagger-ui-express";
@@ -110,5 +111,28 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
-//SWAGER
+// Limpieza periódica de refresh tokens expirados o revocados (cada 24h)
+setInterval(async () => {
+  try {
+    const { count } = await prisma.refreshToken.deleteMany({
+      where: {
+        OR: [
+          { expiresAt: { lt: new Date() } },
+          { revokedAt: { not: null } },
+        ],
+      },
+    });
+    if (count > 0) console.log(`[cleanup] ${count} refresh tokens eliminados`);
+  } catch (err) {
+    console.error("[cleanup] Error limpiando tokens:", err);
+  }
+}, 24 * 60 * 60 * 1000);
+
+//SWAGGER
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Middleware de error global
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[server] Error no manejado:", err.message);
+  res.status(500).json({ message: "Error interno del servidor" });
+});

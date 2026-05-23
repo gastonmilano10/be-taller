@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { z } from "zod";
 import prisma from "../prisma";
 import {
   createAccessToken,
@@ -26,8 +27,19 @@ const toUserWithRole = (user: any): User => ({
   role: UserRole[user.role as keyof typeof UserRole],
 });
 
+const googleLoginSchema = z.object({
+  tokenId: z.string().min(1, "tokenId es requerido"),
+});
+
 export const googleLogin: RequestHandler = async (req, res) => {
-  const { tokenId } = req.body;
+  const parsed = googleLoginSchema.safeParse(req.body);
+  
+  if (!parsed.success) {
+    res.status(400).json({ message: parsed.error.errors[0].message });
+    return;
+  }
+
+  const { tokenId } = parsed.data;
 
   try {
     const ticket = await client.verifyIdToken({
@@ -172,4 +184,23 @@ export const logout: RequestHandler = async (req, res) => {
 
   res.clearCookie("refreshToken", COOKIE_OPTIONS);
   res.status(204).send();
+};
+
+export const getMe: RequestHandler = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      select: { id: true, email: true, name: true, picture: true, role: true, isActive: true },
+    });
+
+    if (!user || !user.isActive) {
+      res.status(401).json({ message: "Usuario no válido" });
+      return;
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error("[auth] getMe error:", error);
+    res.status(500).json({ message: "Error al obtener usuario" });
+  }
 };

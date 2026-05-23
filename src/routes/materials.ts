@@ -12,6 +12,7 @@ import {
   deleteMaterial,
   getMaterialsByService,
 } from "../controllers/material.controller";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -38,6 +39,7 @@ const router = Router();
  */
 router.get(
   "/get",
+  authenticate,
   validate(getMaterialsSchema, "query"),
   getMaterialsByService,
 );
@@ -76,7 +78,7 @@ router.get(
  *       500:
  *         description: Error al crear material
  */
-router.post("/create", validate(createMaterialSchema), createMaterial);
+router.post("/create", authenticate, validate(createMaterialSchema), createMaterial);
 
 /**
  * @swagger
@@ -115,7 +117,7 @@ router.post("/create", validate(createMaterialSchema), createMaterial);
  *       500:
  *         description: Error al editar material
  */
-router.put("/edit", validate(editMaterialSchema), editMaterial);
+router.put("/edit", authenticate, validate(editMaterialSchema), editMaterial);
 
 /**
  * @swagger
@@ -144,6 +146,6 @@ router.put("/edit", validate(editMaterialSchema), editMaterial);
  *       500:
  *         description: Error al eliminar material
  */
-router.delete("/delete", validate(deleteMaterialSchema), deleteMaterial);
+router.delete("/delete", authenticate, validate(deleteMaterialSchema), deleteMaterial);
 
 export default router;
