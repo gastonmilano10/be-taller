@@ -89,9 +89,9 @@ export const googleLogin: RequestHandler = async (req, res) => {
       },
     });
 
-    // Refresh token viaja solo en cookie HttpOnly — FE nunca lo puede leer desde JS
+    // Cookie HttpOnly para browser; también en body para NextAuth server-side (almacena en su JWT encriptado)
     res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
-    res.json({ accessToken, user });
+    res.json({ accessToken, refreshToken, user });
   } catch (error) {
     console.error("[auth] googleLogin error:", error);
     res.status(401).json({ message: "Error en la autenticación con google" });
@@ -99,7 +99,8 @@ export const googleLogin: RequestHandler = async (req, res) => {
 };
 
 export const refreshToken: RequestHandler = async (req, res) => {
-  const token = req.cookies?.refreshToken as string | undefined;
+  // Acepta refreshToken de cookie (browser) o de body (NextAuth server-side)
+  const token = (req.cookies?.refreshToken ?? req.body?.refreshToken) as string | undefined;
 
   if (!token) {
     res.status(400).json({ message: "Refresh token requerido" });
