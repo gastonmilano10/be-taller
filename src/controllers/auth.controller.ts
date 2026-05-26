@@ -100,7 +100,9 @@ export const googleLogin: RequestHandler = async (req, res) => {
 
 export const refreshToken: RequestHandler = async (req, res) => {
   // Acepta refreshToken de cookie (browser) o de body (NextAuth server-side)
-  const token = (req.cookies?.refreshToken ?? req.body?.refreshToken) as string | undefined;
+  const token = (req.cookies?.refreshToken ?? req.body?.refreshToken) as
+    | string
+    | undefined;
 
   if (!token) {
     res.status(400).json({ message: "Refresh token requerido" });
@@ -161,7 +163,7 @@ export const refreshToken: RequestHandler = async (req, res) => {
     });
 
     res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
-    res.json({ accessToken: newAccessToken });
+    res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
   } catch (error) {
     console.error("[auth] refreshToken error:", error);
     res.clearCookie("refreshToken", COOKIE_OPTIONS);
@@ -170,7 +172,10 @@ export const refreshToken: RequestHandler = async (req, res) => {
 };
 
 export const logout: RequestHandler = async (req, res) => {
-  const token = req.cookies?.refreshToken as string | undefined;
+  // Acepta refreshToken de cookie (browser) o de body (NextAuth server-side)
+  const token = (req.cookies?.refreshToken ?? req.body?.refreshToken) as
+    | string
+    | undefined;
 
   if (token) {
     try {
@@ -191,7 +196,14 @@ export const getMe: RequestHandler = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
-      select: { id: true, email: true, name: true, picture: true, role: true, isActive: true },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        picture: true,
+        role: true,
+        isActive: true,
+      },
     });
 
     if (!user || !user.isActive) {
