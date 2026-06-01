@@ -145,3 +145,39 @@ model NextService {
   vehicleId Int
   Vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
 }
+
+model User {
+  id      Int     @id @default(autoincrement())
+  email   String  @unique
+  name    String?
+  picture String?
+  role    String  @default("USER_OWNER")
+
+  //Audit fields
+  isActive   Boolean @default(true)
+  createdOn  String  @default("")
+  modifiedOn String  @default("")
+
+  //Relations
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id         Int       @id @default(autoincrement())
+  tokenHash  String    @unique
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  replacedBy String?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+enum Role {
+  USER_OWNER
+  ADMIN
+}

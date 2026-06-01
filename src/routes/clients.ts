@@ -10,6 +10,8 @@ import {
   getClientsSchema,
 } from "../validators/client.validator";
 import { validate } from "../middlewares/validate";
+import { authenticate } from "../middlewares/auth.middleware";
+import { authorize } from "../middlewares/role.middleware";
 
 const router = Router();
 
@@ -41,7 +43,12 @@ const router = Router();
  *       400:
  *         description: Error de validación
  */
-router.get("/get", validate(getClientsSchema, "query"), getClients);
+router.get(
+  "/get",
+  authenticate,
+  validate(getClientsSchema, "query"),
+  getClients,
+);
 
 /**
  * @swagger
@@ -78,7 +85,13 @@ router.get("/get", validate(getClientsSchema, "query"), getClients);
  *       500:
  *         description: Error al crear cliente
  */
-router.post("/create", validate(createClientSchema), createClient);
+router.post(
+  "/create",
+  authenticate,
+  authorize("ADMIN"),
+  validate(createClientSchema),
+  createClient,
+);
 
 /**
  * @swagger
@@ -117,6 +130,6 @@ router.post("/create", validate(createClientSchema), createClient);
  *       500:
  *         description: Error al editar cliente
  */
-router.put("/edit", validate(editClientSchema), editClient);
+router.put("/edit", authenticate, validate(editClientSchema), editClient);
 
 export default router;

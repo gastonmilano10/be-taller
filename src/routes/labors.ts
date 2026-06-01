@@ -12,6 +12,7 @@ import {
   editLabor,
   getLaborsByService,
 } from "../controllers/labor.controller";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -36,7 +37,7 @@ const router = Router();
  *       500:
  *         description: Error al obtener labores
  */
-router.get("/get", validate(getLaborsSchema, "query"), getLaborsByService);
+router.get("/get", authenticate, validate(getLaborsSchema, "query"), getLaborsByService);
 
 /**
  * @swagger
@@ -72,7 +73,7 @@ router.get("/get", validate(getLaborsSchema, "query"), getLaborsByService);
  *       500:
  *         description: Error al crear labor
  */
-router.post("/create", validate(createLaborSchema), createLabor);
+router.post("/create", authenticate, validate(createLaborSchema), createLabor);
 
 /**
  * @swagger
@@ -111,7 +112,7 @@ router.post("/create", validate(createLaborSchema), createLabor);
  *       500:
  *         description: Error al editar labor
  */
-router.put("/edit", validate(editLaborSchema), editLabor);
+router.put("/edit", authenticate, validate(editLaborSchema), editLabor);
 
 /**
  * @swagger
@@ -140,6 +141,6 @@ router.put("/edit", validate(editLaborSchema), editLabor);
  *       500:
  *         description: Error al eliminar labor
  */
-router.delete("/delete", validate(deleteLaborSchema), deleteLabor);
+router.delete("/delete", authenticate, validate(deleteLaborSchema), deleteLabor);
 
 export default router;
