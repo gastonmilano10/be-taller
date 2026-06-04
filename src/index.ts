@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
-// Carga .env.local primero (override) y luego .env como fallback
-dotenv.config({ path: ".env.local" });
-dotenv.config({ override: false });
+
+dotenv.config();
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
@@ -81,6 +80,14 @@ app.use(
 
 // Limitar tamaño de payload para evitar DoS por body gigante
 app.use(express.json({ limit: "100kb" }));
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send("SERVIDOR CORRIENDO OKKK");
