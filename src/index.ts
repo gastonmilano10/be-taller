@@ -35,6 +35,9 @@ const port = process.env.PORT || 3001;
 
 const app: Express = express();
 
+//Railway está detrás de un único proxy
+app.set("trust proxy", 1);
+
 // Headers de seguridad HTTP (XSS, clickjacking, MIME sniffing, etc.)
 app.use(helmet());
 
