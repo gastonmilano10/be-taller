@@ -52,6 +52,7 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
 app.use(limiter);
 
 // Rate limit estricto para auth: 10 intentos por minuto por IP (anti fuerza bruta)
