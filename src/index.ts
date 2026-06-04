@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
-// Carga .env.local primero (override) y luego .env como fallback
-dotenv.config({ path: ".env.local" });
-dotenv.config({ override: false });
+
+dotenv.config();
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
@@ -36,6 +35,9 @@ const port = process.env.PORT || 3001;
 
 const app: Express = express();
 
+//Railway está detrás de un único proxy
+app.set("trust proxy", 1);
+
 // Headers de seguridad HTTP (XSS, clickjacking, MIME sniffing, etc.)
 app.use(helmet());
 
@@ -50,6 +52,7 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
 app.use(limiter);
 
 // Rate limit estricto para auth: 10 intentos por minuto por IP (anti fuerza bruta)
@@ -81,6 +84,14 @@ app.use(
 
 // Limitar tamaño de payload para evitar DoS por body gigante
 app.use(express.json({ limit: "100kb" }));
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send("SERVIDOR CORRIENDO OKKK");

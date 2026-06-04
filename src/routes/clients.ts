@@ -88,7 +88,7 @@ router.get(
 router.post(
   "/create",
   authenticate,
-  authorize("ADMIN"),
+  authorize("ADMIN", "USER_OWNER"),
   validate(createClientSchema),
   createClient,
 );
@@ -130,6 +130,6 @@ router.post(
  *       500:
  *         description: Error al editar cliente
  */
-router.put("/edit", authenticate, validate(editClientSchema), editClient);
+router.put("/edit", authenticate, authorize("ADMIN", "USER_OWNER"), validate(editClientSchema), editClient);
 
 export default router;
