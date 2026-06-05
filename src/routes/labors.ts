@@ -40,6 +40,7 @@ const router = Router();
  */
 router.get(
   "/get",
+  authenticate,
   authorize("ADMIN", "USER_OWNER"),
   validate(getLaborsSchema, "query"),
   getLaborsByService,
@@ -81,6 +82,7 @@ router.get(
  */
 router.post(
   "/create",
+  authenticate,
   authorize("ADMIN", "USER_OWNER"),
   validate(createLaborSchema),
   createLabor,
@@ -125,6 +127,7 @@ router.post(
  */
 router.put(
   "/edit",
+  authenticate,
   authorize("ADMIN", "USER_OWNER"),
   validate(editLaborSchema),
   editLabor,
@@ -159,6 +162,7 @@ router.put(
  */
 router.delete(
   "/delete",
+  authenticate,
   authorize("ADMIN", "USER_OWNER"),
   validate(deleteLaborSchema),
   deleteLabor,
