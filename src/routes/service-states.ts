@@ -10,6 +10,7 @@ import {
   updateServiceStatus,
 } from "../controllers/service-state.controller";
 import { authenticate } from "../middlewares/auth.middleware";
+import { authorize } from "../middlewares/role.middleware";
 
 const router = Router();
 
@@ -25,7 +26,12 @@ const router = Router();
  *       500:
  *         description: Error al obtener catalogo
  */
-router.get("/catalog", authenticate, getServiceStatesCatalog);
+router.get(
+  "/catalog",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  getServiceStatesCatalog,
+);
 
 /**
  * @swagger
@@ -50,7 +56,13 @@ router.get("/catalog", authenticate, getServiceStatesCatalog);
  *       500:
  *         description: Error al consultar el estado del servicio
  */
-router.get("/get", authenticate, validate(getServiceStatusSchema, "query"), getServiceStatus);
+router.get(
+  "/get",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  validate(getServiceStatusSchema, "query"),
+  getServiceStatus,
+);
 
 /**
  * @swagger
@@ -84,6 +96,12 @@ router.get("/get", authenticate, validate(getServiceStatusSchema, "query"), getS
  *       500:
  *         description: Error al actualizar el estado
  */
-router.post("/update", authenticate, validate(updateServiceStatusSchema), updateServiceStatus);
+router.post(
+  "/update",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  validate(updateServiceStatusSchema),
+  updateServiceStatus,
+);
 
 export default router;
