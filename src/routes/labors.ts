@@ -82,7 +82,6 @@ router.get(
 router.post(
   "/create",
   authorize("ADMIN", "USER_OWNER"),
-  validate(getLaborsSchema, "query"),
   validate(createLaborSchema),
   createLabor,
 );
@@ -127,7 +126,6 @@ router.post(
 router.put(
   "/edit",
   authorize("ADMIN", "USER_OWNER"),
-  validate(getLaborsSchema, "query"),
   validate(editLaborSchema),
   editLabor,
 );
@@ -162,7 +160,6 @@ router.put(
 router.delete(
   "/delete",
   authorize("ADMIN", "USER_OWNER"),
-  validate(getLaborsSchema, "query"),
   validate(deleteLaborSchema),
   deleteLabor,
 );
