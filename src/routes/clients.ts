@@ -46,6 +46,7 @@ const router = Router();
 router.get(
   "/get",
   authenticate,
+  authorize("ADMIN", "USER_OWNER"),
   validate(getClientsSchema, "query"),
   getClients,
 );
@@ -130,6 +131,12 @@ router.post(
  *       500:
  *         description: Error al editar cliente
  */
-router.put("/edit", authenticate, authorize("ADMIN", "USER_OWNER"), validate(editClientSchema), editClient);
+router.put(
+  "/edit",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  validate(editClientSchema),
+  editClient,
+);
 
 export default router;

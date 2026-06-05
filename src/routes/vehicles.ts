@@ -12,6 +12,7 @@ import {
   editVehicleSchema,
 } from "../validators/vehicle.validator";
 import { authenticate } from "../middlewares/auth.middleware";
+import { authorize } from "../middlewares/role.middleware";
 
 const router = Router();
 
@@ -41,7 +42,7 @@ const router = Router();
  *       200:
  *         description: Lista de vehiculos activos
  */
-router.get("/get", authenticate, getVehicles);
+router.get("/get", authenticate, authorize("ADMIN", "USER_OWNER"), getVehicles);
 
 /**
  * @swagger
@@ -86,7 +87,13 @@ router.get("/get", authenticate, getVehicles);
  *       500:
  *         description: Error al crear vehiculo
  */
-router.post("/create", authenticate, validate(createVehicleSchema), createVehicle);
+router.post(
+  "/create",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  validate(createVehicleSchema),
+  createVehicle,
+);
 
 /**
  * @swagger
@@ -136,8 +143,20 @@ router.post("/create", authenticate, validate(createVehicleSchema), createVehicl
  *       500:
  *         description: Error al editar vehiculo
  */
-router.put("/edit", authenticate, validate(editVehicleSchema), editVehicle);
+router.put(
+  "/edit",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  validate(editVehicleSchema),
+  editVehicle,
+);
 
-router.delete("/delete", authenticate, validate(deleteVehicleSchema), deleteVehicle);
+router.delete(
+  "/delete",
+  authenticate,
+  authorize("ADMIN", "USER_OWNER"),
+  validate(deleteVehicleSchema),
+  deleteVehicle,
+);
 
 export default router;

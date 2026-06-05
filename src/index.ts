@@ -24,10 +24,17 @@ import laborsRoutes from "./routes/labors";
 const rateLimit = require("express-rate-limit");
 
 // Validación temprana de variables críticas — falla al inicio si falta algo
-const requiredEnv = ["JWT_SECRET", "JWT_REFRESH_SECRET", "GOOGLE_CLIENT_ID", "DATABASE_URL"];
+const requiredEnv = [
+  "JWT_SECRET",
+  "JWT_REFRESH_SECRET",
+  "GOOGLE_CLIENT_ID",
+  "DATABASE_URL",
+];
 const missingEnv = requiredEnv.filter((v) => !process.env[v]);
 if (missingEnv.length) {
-  console.error(`[server] Faltan variables de entorno: ${missingEnv.join(", ")}`);
+  console.error(
+    `[server] Faltan variables de entorno: ${missingEnv.join(", ")}`,
+  );
   process.exit(1);
 }
 
@@ -59,7 +66,8 @@ app.use(limiter);
 const authLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 10,
-  message: "Demasiados intentos de autenticación, intente nuevamente en un minuto.",
+  message:
+    "Demasiados intentos de autenticación, intente nuevamente en un minuto.",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -94,7 +102,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("SERVIDOR CORRIENDO OKKK");
+  res.send("SERVIDOR TALLER BACKEND - API REST");
 });
 
 //AUTH (rate limit estricto)
@@ -123,27 +131,35 @@ app.listen(port, () => {
 });
 
 // Limpieza periódica de refresh tokens expirados o revocados (cada 24h)
-setInterval(async () => {
-  try {
-    const { count } = await prisma.refreshToken.deleteMany({
-      where: {
-        OR: [
-          { expiresAt: { lt: new Date() } },
-          { revokedAt: { not: null } },
-        ],
-      },
-    });
-    if (count > 0) console.log(`[cleanup] ${count} refresh tokens eliminados`);
-  } catch (err) {
-    console.error("[cleanup] Error limpiando tokens:", err);
-  }
-}, 24 * 60 * 60 * 1000);
+setInterval(
+  async () => {
+    try {
+      const { count } = await prisma.refreshToken.deleteMany({
+        where: {
+          OR: [{ expiresAt: { lt: new Date() } }, { revokedAt: { not: null } }],
+        },
+      });
+      if (count > 0)
+        console.log(`[cleanup] ${count} refresh tokens eliminados`);
+    } catch (err) {
+      console.error("[cleanup] Error limpiando tokens:", err);
+    }
+  },
+  24 * 60 * 60 * 1000,
+);
 
 //SWAGGER
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Middleware de error global
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("[server] Error no manejado:", err.message);
-  res.status(500).json({ message: "Error interno del servidor" });
-});
+app.use(
+  (
+    err: Error,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction,
+  ) => {
+    console.error("[server] Error no manejado:", err.message);
+    res.status(500).json({ message: "Error interno del servidor" });
+  },
+);
