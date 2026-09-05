@@ -43,6 +43,9 @@ export const getVehicles = async (req: Request, res: Response) => {
         ...(number && { number: String(number) }),
         ...(clientId && { clientId: Number(clientId) }),
       },
+      include: {
+        client: true,
+      },
     });
 
     res.status(200).json({ isError: false, data: vehicles });
