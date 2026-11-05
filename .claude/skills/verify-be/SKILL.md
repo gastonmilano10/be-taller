@@ -5,7 +5,7 @@ description: Verificar un cambio en be-taller antes de cerrarlo (type-check y bu
 
 # Verificación de be-taller
 
-No hay tests ni lint configurados. La verificación es de tipos y de compilación.
+No hay tests ni lint configurados. La verificación es de tipos y de compilación. Si se agrega lint o formateo en el futuro, solo sobre archivos agregados o modificados (`git status --short`), nunca sobre todo el repo.
 
 ## Pasos
 

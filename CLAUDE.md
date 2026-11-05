@@ -6,6 +6,7 @@
 - `yarn build` (tsc a `dist/`), `yarn start` (`node dist/index.js`), `yarn type-check` (`tsc --noEmit`).
 - Prisma: `yarn prisma:generate`, `yarn prisma:migrate` (`migrate dev`), `yarn prisma:deploy` (`migrate deploy`).
 - `yarn test` es un placeholder que falla. No hay tests ni lint configurados.
+- Lint y formateo: hoy no hay herramientas. Si se agregan, correrlos solo sobre archivos agregados o modificados del cambio (`git status --short`), nunca sobre todo el repo ni con `--write .`.
 - No ejecutar `prisma:migrate` ni `prisma:deploy` sin confirmación explícita.
 - Scripts `check:3001`, `stop:3001`, `restart:3001` son solo para Windows (PowerShell).
 

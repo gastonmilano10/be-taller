@@ -1,0 +1,68 @@
+schema: spec-driven
+
+context: |
+  Idioma de artefactos OpenSpec: español.
+  Stack backend: Node.js, Express 5, TypeScript, Prisma 6 con PostgreSQL, zod, jsonwebtoken, swagger-jsdoc y swagger-ui-express.
+  Arquitectura: frontend y backend en repositorios separados; integración exclusiva por REST API.
+  Principio: validar toda entrada con zod y mantener el contrato de respuesta estable.
+
+  Convenciones de backend:
+  - Rutas en src/routes/<recurso>.ts, con documentación Swagger en JSDoc (@swagger) en cada ruta.
+  - Controllers en src/controllers/<recurso>.controller.ts; acceden a Prisma directamente.
+  - Validadores zod en src/validators/<recurso>.validator.ts, aplicados con el middleware validate().
+  - Middlewares de auth: authenticate (JWT) y authorize(...roles) en src/middlewares/.
+  - Rutas con estilo RPC: verbo en el path (/get, /create, /edit, /delete), sin prefijo /api.
+  - Respuestas de éxito: { isError: false, data }. Errores de controller: { isError: true, error }.
+  - Códigos: 201 en create, 200 en get/edit/delete (baja lógica), 400 en validación, 401/403 en auth, 404 si no existe.
+
+  Datos:
+  - Schema en prisma/schema.prisma. Cambios de schema requieren migración en prisma/migrations.
+  - No ejecutar prisma migrate deploy ni reset sin confirmación explícita.
+
+  Autenticación y autorización:
+  - Access JWT de 30 minutos (issuer be-taller, audience fe-taller); refresh token de 7 días con rotación.
+  - Roles actuales: ADMIN y USER_OWNER. Considerar impacto en authorize(...) en cada ruta nueva.
+
+  Calidad:
+  - No hay tests ni lint configurados en el repositorio. La verificación es type-check y build.
+  - No usar any en TypeScript; tipos explícitos o inferidos seguros.
+
+  Convenciones OpenSpec:
+  - Cada cambio de API o de datos corresponde a un change.
+  - Nombre del change en inglés y kebab-case.
+
+rules:
+  proposal:
+    - Escribir en español.
+    - Incluir secciones: Objective, Scope, Out of Scope, Functional Flow, Acceptance Criteria.
+    - Aclarar impacto: frontend, backend o ambos. Si afecta el contrato de API, listar los endpoints y cambios de request/response.
+    - Indicar impacto en autenticación y autorización (roles, rutas protegidas) cuando corresponda.
+    - Indicar si requiere cambio de schema de Prisma y migración.
+    - Definir non-goals de forma explícita.
+
+  design:
+    - Escribir en español.
+    - Documentar decisiones técnicas y alternativas descartadas.
+    - Definir límites de responsabilidad entre frontend y backend.
+    - Describir validaciones zod, middlewares y códigos de error.
+    - Describir cambios de schema Prisma, relaciones y estrategia de migración.
+    - Indicar impacto en la documentación Swagger.
+
+  spec:
+    - Escribir en español.
+    - Definir requirements con escenarios verificables.
+    - Usar formato WHEN/THEN en los escenarios.
+    - Describir comportamiento observable: status codes, formato de respuesta y errores.
+    - Incluir criterios de autorización cuando la ruta esté protegida.
+    - Describir comportamiento observable, no implementación interna.
+
+  tasks:
+    - Escribir en español.
+    - Mantener granularidad aproximada de hasta 2 horas por tarea.
+    - Ordenar tareas en secuencia implementable y verificable.
+    - Incluir tarea de validador zod y de documentación Swagger cuando aplique.
+    - Incluir tarea de migración de Prisma solo si el cambio lo requiere, y marcarla como pendiente de confirmación.
+    - Al finalizar, ejecutar yarn type-check y yarn build como validación obligatoria.
+    - No ejecutar migraciones contra bases de datos sin confirmación explícita.
+    - Lint y formateo, si se configuran, solo sobre archivos agregados o modificados del change; sin ejecución global.
+    - Incluir validación OpenSpec antes de cerrar el change.
