@@ -66,6 +66,8 @@ model Service {
   materials                   Material[]
   labors                      Labor[]
   RelationServiceStateService RelationServiceStateService[]
+  originatedNextServices      NextService[]                 @relation("NextServiceOrigin")
+  realizedNextServices        NextService[]                 @relation("NextServiceRealized")
 }
 
 model Material {
@@ -130,11 +132,15 @@ model RelationServiceStateService {
 }
 
 model NextService {
-  id           Int     @id @default(autoincrement())
-  reason       String
-  isUrgent     Boolean
-  isRealized   Boolean
-  observations String?
+  id            Int     @id @default(autoincrement())
+  reason        String
+  isUrgent      Boolean
+  isRealized    Boolean
+  observations  String?
+  dueInterval   String?
+  dueDate       String?
+  dueKilometers Int?
+  realizedOn    String?
 
   //Audit fields
   isActive   Boolean @default(true)
@@ -144,6 +150,13 @@ model NextService {
   //Relations
   vehicleId Int
   Vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  originServiceId   Int?
+  originService     Service? @relation("NextServiceOrigin", fields: [originServiceId], references: [id])
+  realizedServiceId Int?
+  realizedService   Service? @relation("NextServiceRealized", fields: [realizedServiceId], references: [id])
+
+  @@index([vehicleId])
 }
 
 model User {

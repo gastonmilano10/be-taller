@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+// .env.local (local, no versionado) tiene prioridad sobre .env
+dotenv.config({ path: [".env.local", ".env"] });
 
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
@@ -20,6 +21,7 @@ import servicesRoutes from "./routes/services";
 import serviceStatesRoutes from "./routes/service-states";
 import materialsRoutes from "./routes/materials";
 import laborsRoutes from "./routes/labors";
+import nextServicesRoutes from "./routes/next-services";
 
 const rateLimit = require("express-rate-limit");
 
@@ -125,6 +127,9 @@ app.use("/materials", materialsRoutes);
 
 //LABORS
 app.use("/labors", laborsRoutes);
+
+//NEXT SERVICES (pendientes por vehículo)
+app.use("/next-services", nextServicesRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
